@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Latest Sensor Data</title>
+</head>
+<body>
+    <h1>Latest Sensor Data</h1>
+    {% if latest_data %}
+        <p><strong>Timestamp:</strong> {{ latest_data.timestamp }}</p>
+        <p><strong>Voltage:</strong> {{ latest_data.voltage }} V</p>
+        <p><strong>Current:</strong> {{ latest_data.current }} A</p>
+        <p><strong>PWM Duty Cycle:</strong> {{ latest_data.pwm_duty_cycle }}</p>
+        <p><strong>PWM Frequency:</strong> {{ latest_data.pwm_frequency }} Hz</p>
+        <p><strong>PWM Period:</strong> {{ latest_data.pwm_period }} s</p>
+        <p><strong>Percentage Param:</strong> {{ latest_data.percentage_param }}%</p>
+    {% else %}
+        <p>No data available yet.</p>
+    {% endif %}
+</body>
+</html>
