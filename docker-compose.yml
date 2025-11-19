@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  django:
+    build: .
+    container_name: django_app
+    expose:
+      - "8000"  # Открываем только порт внутри сети Docker
+    restart: always
+    environment:
+      - DJANGO_ENV=production
+    networks:
+      - webnet
+
+  caddy:
+    image: caddy:latest
+    container_name: caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"  # HTTP
+      - "443:443"  # HTTPS
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - webnet
+
+volumes:
+  caddy_data:
+  caddy_config:
+
+networks:
+  webnet:
+    driver: bridge

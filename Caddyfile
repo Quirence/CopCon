@@ -1,0 +1,7 @@
+copcon.s.devproject.dev {
+    reverse_proxy django:8000
+}
+
+http://copcon.s.devproject.dev:8080 {
+    reverse_proxy django:8000
+}

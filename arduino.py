@@ -5,7 +5,7 @@ import time
 import math
 
 # URL вашего Django-сервера
-url = 'http://localhost:8000/esp/receive/'  # Правильный путь согласно вашей view
+url = 'http://copcon.s.devproject.dev/esp/receive/'  # Правильный путь согласно вашей view
 
 # Заранее определенные оптимальные параметры для каждого полета
 # Формат: (pwm_duty_cycle, rpm_percentage, ожидаемая_мин_мощность)
@@ -16,7 +16,7 @@ OPTIMAL_PARAMS = {
 }
 
 # Количество записей на каждый полёт (минимум 20 для хорошей регрессии)
-records_per_flight = 30
+records_per_flight = 50
 
 # Пауза между отправками (в секундах)
 delay_between_requests = 0.1  # Уменьшено для быстрой генерации
