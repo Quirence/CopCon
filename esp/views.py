@@ -40,6 +40,7 @@ WARNING_COLOR = (0.824, 0.600, 0.133, 1.0)  # #d29922
 # ---------------------
 # Flight Selection View
 # ---------------------
+@csrf_exempt
 def analyze_overview(request):
     """
     Displays flight selection page with:
@@ -79,7 +80,7 @@ def analyze_overview(request):
 # Debug Flight Detail View
 # ---------------------
 # ... остальной код представлений ...
-
+@csrf_exempt
 def flight_detail(request, flight_id):
     """
     Renders detailed analytics for a specific flight with comprehensive debugging information.
@@ -728,7 +729,7 @@ def flight_detail(request, flight_id):
 # ---------------------
 # Flight Deletion View
 # ---------------------
-@csrf_protect
+@csrf_exempt
 def delete_flight(request, flight_id):
     """
     Handles flight data deletion with password protection.

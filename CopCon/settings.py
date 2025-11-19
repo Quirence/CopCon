@@ -125,7 +125,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://copcon.s.devproject.dev",
+    "https://cc.s.devproject.dev",
     "http://localhost:8000",
     "https://localhost:3000", # если используете HTTPS
     "http://localhost:8080",
