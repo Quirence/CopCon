@@ -1,32 +1,130 @@
 import requests
 import json
 import random
-import time # Импортируем time
+import time
+import math
 
-url = 'http://127.0.0.1:8000/esp/receive/'
+# URL вашего Django-сервера
+url = 'http://localhost:8000/esp/receive/'  # Правильный путь согласно вашей view
 
-for i in range(5): # Цикл из 5 итераций
-    data_to_send = {
-        "voltage": round(random.uniform(0.0, 12.0), 2),
-        "current": round(random.uniform(0.0, 5.0), 2),
-        "pwm_duty_cycle": round(random.uniform(0.0, 1.0), 3),
-        "pwm_frequency": round(random.uniform(10.0, 1000.0), 1),
-        "pwm_period": round(random.uniform(0.001, 0.1), 4),
-        "percentage_param": round(random.uniform(0, 100), 1)
+# Заранее определенные оптимальные параметры для каждого полета
+# Формат: (pwm_duty_cycle, rpm_percentage, ожидаемая_мин_мощность)
+OPTIMAL_PARAMS = {
+    1: (0.55, 55.0, 45.2),  # Полет 1: оптимум при ШИМ=0.55, обороты=55%
+    2: (0.65, 45.0, 50.1),  # Полет 2: оптимум при ШИМ=0.65, обороты=45%
+    3: (0.45, 65.0, 40.5)  # Полет 3: оптимум при ШИМ=0.45, обороты=65%
+}
+
+# Количество записей на каждый полёт (минимум 20 для хорошей регрессии)
+records_per_flight = 30
+
+# Пауза между отправками (в секундах)
+delay_between_requests = 0.1  # Уменьшено для быстрой генерации
+
+
+def generate_realistic_data(flight_id, record_num):
+    """Генерирует реалистичные данные с заранее известным оптимумом"""
+    # Получаем оптимальные параметры для этого полета
+    opt_pwm, opt_rpm, min_power = OPTIMAL_PARAMS[flight_id]
+
+    # Генерируем параметры с фокусом на области вокруг оптимума
+    if random.random() < 0.7:  # 70% данных вокруг оптимума
+        # Точки около оптимального режима
+        pwm = opt_pwm + random.uniform(-0.15, 0.15)
+        rpm = opt_rpm + random.uniform(-8.0, 8.0)
+    else:  # 30% данных в других областях
+        pwm = random.uniform(0.35, 0.85)
+        rpm = random.uniform(30.0, 80.0)
+
+    # Ограничиваем диапазоны
+    pwm = max(0.35, min(0.85, pwm))
+    rpm = max(30.0, min(80.0, rpm))
+
+    # Формула для создания четкого минимума мощности в оптимальной точке
+    # Используем двумерную параболу с минимумом в точке (opt_pwm, opt_rpm)
+    distance_pwm = (pwm - opt_pwm) ** 2
+    distance_rpm = (rpm - opt_rpm) ** 2
+
+    # Базовая мощность с шумом и зависимостью от расстояния до оптимума
+    base_power = min_power + (distance_pwm * 150 + distance_rpm * 0.8) + random.uniform(-2.0, 3.0)
+
+    # Реалистичные соотношения напряжения и тока
+    voltage = random.uniform(11.2, 12.4)  # Реалистичное напряжение LiPo под нагрузкой
+    current = base_power / voltage
+
+    # Добавляем реалистичный шум и корреляции
+    if random.random() < 0.15:  # 15% точек - выбросы
+        current *= random.uniform(1.3, 1.8)
+
+    # Округление до реалистичной точности
+    return {
+        "voltage": round(voltage, 2),
+        "current": round(current, 2),
+        "pwm_duty_cycle": round(pwm, 3),
+        "rpm_percentage": round(rpm, 1),
+        "flight_id": flight_id
     }
 
-    json_data = json.dumps(data_to_send)
-    headers = {'Content-Type': 'application/json'}
 
-    try:
-        response = requests.post(url, data=json_data, headers=headers)
-        if response.status_code == 200:
-            print(f"[{i+1}] Данные успешно отправлены: {data_to_send}")
-        else:
-            print(f"[{i+1}] Ошибка. Статус: {response.status_code}, Ответ: {response.text}")
-    except requests.exceptions.RequestException as e:
-        print(f"[{i+1}] Ошибка запроса: {e}")
+def print_optimal_summary():
+    """Выводит сводку по оптимальным параметрам для проверки"""
+    print("\n" + "=" * 60)
+    print("ЗАРАНЕЕ ИЗВЕСТНЫЕ ОПТИМАЛЬНЫЕ ПАРАМЕТРЫ ДЛЯ ПРОВЕРКИ:")
+    print("=" * 60)
+    for flight_id, (opt_pwm, opt_rpm, min_power) in OPTIMAL_PARAMS.items():
+        print(f"Полет #{flight_id}:")
+        print(f"  • Оптимальная скважность ШИМ: {opt_pwm:.3f}")
+        print(f"  • Оптимальные обороты: {opt_rpm:.1f}%")
+        print(f"  • Ожидаемая минимальная мощность: {min_power:.1f} Вт")
+        print(f"  • Расчетное напряжение при оптимуме: ~12.0 В")
+        print(f"  • Расчетный ток при оптимуме: ~{min_power / 12.0:.1f} А")
+        print("-" * 60)
+    print("=" * 60)
 
-    time.sleep(2) # Пауза 2 секунды между запросами
 
-print("Отправка завершена.")
+# Выводим сводку перед отправкой
+print_optimal_summary()
+
+# Отправка данных для каждого полета
+for flight_id in range(1, 4):  # Полеты 1, 2, 3
+    print(f"\n🚀 НАЧАЛО ОТПРАВКИ ДАННЫХ ДЛЯ ПОЛЕТА #{flight_id}")
+    print("-" * 50)
+
+    # Отправляем записи для этого полета
+    for i in range(records_per_flight):
+        data = generate_realistic_data(flight_id, i)
+
+        # Добавляем немного динамики во времени для первой записи
+        if i == 0:
+            time.sleep(0.5)  # Небольшая пауза перед началом полета
+
+        json_data = json.dumps(data)
+        headers = {'Content-Type': 'application/json'}
+
+        try:
+            response = requests.post(url, data=json_data, headers=headers)
+            if response.status_code == 200:
+                status = "✅" if (abs(data['pwm_duty_cycle'] - OPTIMAL_PARAMS[flight_id][0]) < 0.05 and
+                                 abs(data['rpm_percentage'] - OPTIMAL_PARAMS[flight_id][1]) < 3.0) else "  "
+                print(
+                    f"[{status} Flight {flight_id}, #{i + 1:2d}] PWM: {data['pwm_duty_cycle']:.3f}, RPM: {data['rpm_percentage']:5.1f}%, "
+                    f"Power: {data['voltage'] * data['current']:5.1f}W | {response.json()['status']}")
+            else:
+                print(f"[❌ Flight {flight_id}, #{i + 1}] ERROR {response.status_code}: {response.text}")
+
+        except requests.exceptions.RequestException as e:
+            print(f"[🔥 Flight {flight_id}, #{i + 1}] REQUEST ERROR: {e}")
+
+        time.sleep(delay_between_requests)
+
+    print(f"\n✅ ПОЛЕТ #{flight_id} ЗАВЕРШЕН. Отправлено {records_per_flight} записей.")
+    time.sleep(1)  # Пауза между полетами
+
+print("\n" + "=" * 60)
+print("🎉 ГЕНЕРАЦИЯ ДАННЫХ УСПЕШНО ЗАВЕРШЕНА!")
+print("=" * 60)
+print("Теперь проверьте результаты анализа в веб-интерфейсе.")
+print("Оптимальные параметры должны совпасть с заранее известными значениями:")
+for flight_id, (opt_pwm, opt_rpm, min_power) in OPTIMAL_PARAMS.items():
+    print(f"  • Полет #{flight_id}: ШИМ={opt_pwm:.3f}, Обороты={opt_rpm:.1f}%")
+print("=" * 60)

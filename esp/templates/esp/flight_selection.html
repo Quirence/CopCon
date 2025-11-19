@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page_title }}</title>
+    <!-- Bootstrap Icons (перенесено в head) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            /* Темно-синяя палитра с улучшенным контрастом */
+            --bg-dark: #0d1117; /* Основной темный фон */
+            --card-bg: #161b22; /* Фон карточек */
+            --header-bg: #21262d; /* Фон заголовков */
+            --border-color: #30363d; /* Цвет границ */
+            --text: #ffffff; /* Основной белый текст */
+            --text-muted: #adbac7; /* Улучшенный приглушенный текст (было #8b949e) */
+            --text-secondary: #8b949e; /* Для менее важного текста */
+            --accent: #58a6ff; /* Акцентный синий */
+            --accent-light: #79c0ff; /* Светлый акцент */
+            --success: #3fb950; /* Успех */
+            --error: #f85149; /* Ошибка */
+            --btn-primary: #238636; /* Зеленая кнопка */
+            --btn-primary-hover: #2ea043;
+            --input-bg: #0d1117; /* Фон полей ввода */
+            --input-border: #30363d; /* Граница полей ввода */
+            --input-focus: #58a6ff; /* Фокус полей ввода */
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text);
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            flex: 1;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-header {
+            background-color: var(--header-bg);
+            color: var(--accent-light);
+            font-weight: 600;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .form-label {
+            color: var(--text) !important;
+            font-weight: 600 !important;
+            margin-bottom: 0.5rem !important;
+        }
+
+        .form-select, .form-control {
+            background-color: var(--input-bg) !important;
+            color: var(--text) !important;
+            border: 1px solid var(--input-border) !important;
+            padding: 0.5rem 1rem !important;
+            font-size: 1.1rem !important;
+        }
+
+        .form-select:focus, .form-control:focus {
+            border-color: var(--input-focus) !important;
+            box-shadow: 0 0 0 0.25rem rgba(88, 166, 255, 0.25) !important;
+        }
+
+        .form-select option {
+            background-color: var(--card-bg) !important;
+            color: var(--text) !important;
+        }
+
+        .form-select option:disabled {
+            color: var(--text-secondary) !important;
+            opacity: 0.7 !important;
+        }
+
+        .form-text {
+            color: var(--text-muted) !important;
+            font-size: 0.9rem !important;
+            margin-top: 0.25rem !important;
+            opacity: 0.9 !important;
+        }
+
+        .btn-primary {
+            background-color: var(--btn-primary);
+            border-color: var(--btn-primary);
+            font-weight: 500;
+            padding: 0.75rem 1.5rem;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--btn-primary-hover);
+            border-color: var(--btn-primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-outline-secondary {
+            color: var(--text-muted);
+            border-color: var(--border-color);
+            transition: all 0.2s ease;
+        }
+
+        .btn-outline-secondary:hover {
+            background-color: rgba(56, 139, 253, 0.15);
+            color: var(--accent-light);
+            border-color: var(--accent);
+            transform: rotate(15deg);
+        }
+
+        .btn-outline-secondary:active {
+            transform: rotate(0);
+        }
+
+        .refresh-btn {
+            transition: all 0.3s ease !important;
+            width: 50px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }
+
+        .refresh-btn:hover {
+            transform: rotate(360deg) !important;
+        }
+
+        .refresh-btn i {
+            font-size: 1.2rem !important;
+        }
+
+        footer {
+            text-align: center;
+            padding: 1rem;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            border-top: 1px solid var(--border-color);
+            margin-top: 2rem;
+        }
+
+        .alert {
+            border-radius: 8px !important;
+            margin-top: 1rem !important;
+            border: 1px solid var(--border-color) !important;
+            background-color: rgba(26, 31, 38, 0.7) !important;
+        }
+
+        .alert-success {
+            border-color: rgba(63, 185, 80, 0.3) !important;
+        }
+
+        .alert-error, .alert-danger {
+            border-color: rgba(248, 81, 73, 0.3) !important;
+        }
+
+        .alert-warning {
+            border-color: rgba(210, 153, 34, 0.3) !important;
+        }
+
+        .page-title {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 0.75rem !important;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            .card {
+                border-radius: 6px;
+            }
+            .refresh-btn {
+                width: 45px !important;
+            }
+            .btn-primary {
+                padding: 0.6rem 1.2rem;
+                font-size: 0.95rem;
+            }
+        }
+
+        /* Анимация появления карточки */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card {
+            animation: fadeInUp 0.5s ease-out forwards;
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card shadow-lg">
+                    <div class="card-header text-center py-3">
+                        <h1 class="h3 mb-0 page-title">
+                            <i class="bi bi-airplane-engines"></i>
+                            {{ page_title }}
+                        </h1>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST" id="flightForm">
+                            {% csrf_token %}
+                            <div class="mb-4">
+                                <label for="flightSelect" class="form-label">
+                                    <i class="bi bi-list-task me-2"></i>Выберите полет для анализа
+                                </label>
+                                <div class="input-group">
+                                    <select id="flightSelect" name="flight_id" class="form-select form-select-lg" required>
+                                        <option value="" disabled selected>Выберите ID полета...</option>
+                                        {% for option in flight_options %}
+                                        <option value="{{ option.id }}">
+                                            {{ option.display }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                    <button type="button" class="btn btn-outline-secondary refresh-btn"
+                                            title="Обновить список полетов" onclick="location.reload()">
+                                        <i class="bi bi-arrow-clockwise"></i>
+                                    </button>
+                                </div>
+                                <div class="form-text">
+                                    <i class="bi bi-info-circle me-1"></i>Список обновляется автоматически при добавлении новых данных
+                                </div>
+                            </div>
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="bi bi-graph-up-arrow me-2"></i>Показать аналитику полета
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                {% if messages %}
+                <div class="mt-4">
+                    {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        <i class="bi bi-{{ message.tags|default:'info-circle' }} me-2"></i>
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-dark py-3 mt-auto">
+        <div class="container">
+            <span class="d-flex align-items-center justify-content-center">
+                <i class="bi bi-bar-chart-line me-2"></i>
+                Система аналитики БПЛА &copy; {% now 'Y' %}
+            </span>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Улучшение доступности для элементов формы -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Добавление иконок в опции селекта
+            const select = document.getElementById('flightSelect');
+            if (select) {
+                Array.from(select.options).forEach(option => {
+                    if (option.value && !option.disabled) {
+                        option.text = `${option.text}`;
+                    }
+                });
+            }
+
+            // Фокус на селект при загрузке страницы
+            setTimeout(() => {
+                if (select && select.options.length > 1) {
+                    select.focus();
+                }
+            }, 300);
+        });
+    </script>
+</body>
+</html>

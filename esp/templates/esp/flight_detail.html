@@ -1,0 +1,859 @@
+{% load math_filters %}
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page_title }}</title>
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <!-- Plotly -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        :root {
+            /* Темно-синяя палитра с улучшенным контрастом */
+            --bg-dark: #0d1117; /* Основной темный фон */
+            --card-bg: #161b22; /* Фон карточек */
+            --header-bg: #21262d; /* Фон заголовков */
+            --border-color: #30363d; /* Цвет границ */
+            --text: #ffffff; /* Основной белый текст */
+            --text-muted: #8b949e; /* Приглушенный текст */
+            --accent: #58a6ff; /* Акцентный синий */
+            --accent-light: #79c0ff; /* Светлый акцент */
+            --success: #3fb950; /* Успех */
+            --error: #f85149; /* Ошибка */
+            --warning: #d29922; /* Предупреждение */
+            --btn-primary: #238636; /* Зеленая кнопка */
+            --btn-primary-hover: #2ea043;
+            --btn-danger: #da373c;
+            --btn-danger-hover: #f85149;
+            --input-bg: #0d1117; /* Фон полей ввода */
+            --debug-border: #6f42c1; /* Фиолетовый для отладки */
+            --debug-bg: rgba(111, 66, 193, 0.15); /* Более темный фиолетовый */
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text);
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container-fluid {
+            padding-top: 1.5rem;
+            padding-bottom: 2rem;
+            flex: 1;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            margin-bottom: 1.5rem;
+            transition: transform 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+        }
+
+        .card-header {
+            background-color: var(--header-bg);
+            color: var(--accent-light);
+            font-weight: 600;
+            border-bottom: 1px solid var(--border-color);
+            padding: 0.75rem 1.25rem;
+        }
+
+        .card-body {
+            padding: 1.25rem;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            color: var(--accent-light);
+            font-weight: 600;
+        }
+
+        .table {
+            color: var(--text);
+            --bs-table-color: var(--text);
+            --bs-table-bg: transparent;
+            --bs-table-border-color: var(--border-color);
+        }
+
+        .table th {
+            color: var(--text-muted);
+            font-weight: 500;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .table td {
+            color: var(--text);
+            border-color: var(--border-color);
+        }
+
+        .btn-outline-danger {
+            color: var(--error);
+            border-color: var(--error);
+        }
+
+        .btn-outline-danger:hover {
+            background-color: rgba(248, 81, 73, 0.15);
+            color: var(--error);
+        }
+
+        .btn-primary {
+            background-color: var(--btn-primary);
+            border-color: var(--btn-primary);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--btn-primary-hover);
+            border-color: var(--btn-primary-hover);
+        }
+
+        .btn-secondary {
+            background-color: var(--header-bg);
+            color: var(--text);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: #2c3e50;
+            border-color: #2c3e50;
+        }
+
+        .btn-danger {
+            background-color: var(--btn-danger);
+            border-color: var(--btn-danger);
+        }
+
+        .btn-danger:hover {
+            background-color: var(--btn-danger-hover);
+            border-color: var(--btn-danger-hover);
+        }
+
+        .modal-content {
+            background-color: var(--card-bg);
+            color: var(--text);
+            border: 1px solid var(--border-color);
+        }
+
+        .modal-header {
+            background-color: var(--header-bg);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .modal-title {
+            color: var(--accent-light);
+        }
+
+        .modal-body {
+            color: var(--text);
+        }
+
+        input.form-control {
+            background-color: var(--input-bg) !important;
+            color: var(--text) !important;
+            border: 1px solid var(--border-color) !important;
+        }
+
+        input.form-control::placeholder {
+            color: var(--text-muted) !important;
+        }
+
+        input.form-control:focus {
+            border-color: var(--accent) !important;
+            box-shadow: 0 0 0 0.25rem rgba(88, 166, 255, 0.25) !important;
+        }
+
+        /* Plotly dark theme override */
+        .js-plotly-plot .plotly .modebar {
+            background: var(--card-bg) !important;
+            color: var(--text);
+        }
+
+        .js-plotly-plot .plotly .modebar-btn svg path {
+            fill: var(--text) !important;
+        }
+
+        .js-plotly-plot .plotly .modebar-btn {
+            color: var(--text) !important;
+        }
+
+        /* Plot container sizing */
+        .plot-container {
+            width: 100%;
+            min-height: 450px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        @media (max-width: 992px) {
+            .plot-container {
+                min-height: 400px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .plot-container {
+                min-height: 350px;
+            }
+            .card-body {
+                padding: 1rem;
+            }
+            .card-header {
+                padding: 0.5rem 1rem;
+            }
+        }
+
+        .stat-badge {
+            background-color: rgba(88, 166, 255, 0.1);
+            color: var(--accent-light);
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+
+        .optimal-value {
+            color: var(--success);
+            font-weight: 600;
+        }
+
+        .model-value {
+            color: var(--warning);
+            font-weight: 600;
+        }
+
+        .alert-warning {
+            background-color: rgba(210, 153, 34, 0.1);
+            border-color: rgba(210, 153, 34, 0.3);
+            color: var(--warning);
+        }
+
+        .no-data-message {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--text-muted);
+        }
+
+        footer {
+            text-align: center;
+            padding: 1rem;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            border-top: 1px solid var(--border-color);
+            margin-top: 1rem;
+        }
+
+        .flight-id-badge {
+            background-color: rgba(56, 139, 253, 0.15);
+            color: var(--accent-light);
+            font-weight: 600;
+            padding: 0.35rem 0.85rem;
+            border-radius: 20px;
+            display: inline-block;
+            margin-left: 0.5rem;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(550px, 1fr));
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .grid-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Debug panel styles - COMPLETELY REWORKED */
+        .debug-panel {
+            border: 2px solid var(--debug-border) !important;
+            background-color: var(--debug-bg) !important;
+        }
+
+        .debug-panel .card-header {
+            background-color: rgba(111, 66, 193, 0.25) !important;
+            color: #ffffff !important;
+            border-bottom: 1px solid var(--debug-border) !important;
+        }
+
+        .debug-panel .card-body {
+            color: #ffffff !important;
+        }
+
+        .debug-panel h6,
+        .debug-panel h5,
+        .debug-panel p,
+        .debug-panel li,
+        .debug-panel strong,
+        .debug-panel span,
+        .debug-panel a,
+        .debug-panel code {
+            color: #ffffff !important;
+        }
+
+        .debug-panel .text-success,
+        .debug-panel .text-danger,
+        .debug-panel .text-warning,
+        .debug-panel .text-info,
+        .debug-panel .text-muted {
+            color: #ffffff !important;
+        }
+
+        .debug-panel .text-success::before,
+        .debug-panel .text-danger::before,
+        .debug-panel .text-warning::before,
+        .debug-panel .text-info::before {
+            color: #ffffff !important;
+        }
+
+        .debug-json {
+            background-color: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 1rem;
+            font-family: monospace;
+            font-size: 0.85rem;
+            max-height: 400px;
+            overflow: auto;
+            white-space: pre-wrap;
+            word-break: break-all;
+            color: #ffffff !important;
+        }
+
+        .debug-missing {
+            background-color: rgba(41, 35, 59, 0.8);
+            border-left: 4px solid var(--error);
+            padding: 1rem;
+            border-radius: 0 4px 4px 0;
+            color: #ffffff !important;
+        }
+
+        .debug-raw {
+            background-color: rgba(26, 24, 43, 0.8);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 1rem;
+            margin-top: 1rem;
+            font-family: monospace;
+            font-size: 0.85rem;
+            color: #ffffff !important;
+        }
+
+        .debug-toggle {
+            background-color: rgba(111, 66, 193, 0.3);
+            border: 1px solid var(--debug-border);
+            color: #ffffff;
+            transition: all 0.2s ease;
+        }
+
+        .debug-toggle:hover {
+            background-color: rgba(111, 66, 193, 0.5);
+            border-color: #8a75d6;
+        }
+
+        .debug-list-item {
+            transition: all 0.2s ease;
+            border-bottom: 1px solid rgba(100, 100, 100, 0.1);
+        }
+
+        .debug-list-item:hover {
+            background-color: rgba(111, 66, 193, 0.15);
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <!-- Header -->
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4">
+            <div class="d-flex align-items-center mb-3 mb-md-0">
+                <h1 class="mb-0"><i class="bi bi-graph-up me-2"></i>Анализ полета</h1>
+                <span class="flight-id-badge">ID: {{ flight_id }}</span>
+            </div>
+            <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                <i class="bi bi-trash me-1"></i>Удалить данные полета
+            </button>
+        </div>
+
+        {% if data_count < 10 %}
+        <div class="alert alert-warning text-center">
+            <i class="bi bi-exclamation-triangle me-2"></i>
+            Для полета #{{ flight_id }} недостаточно данных ({{ data_count }} записей).
+            Требуется минимум 10 записей для полноценного анализа.
+        </div>
+        <div class="text-center mt-4">
+            <a href="{% url 'esp:analyze_overview' %}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left me-1"></i>Вернуться к выбору полетов
+            </a>
+        </div>
+        {% else %}
+        <!-- Summary Card -->
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-speedometer2 me-2"></i>Резюме полета
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <tbody>
+                            <tr>
+                                <th scope="row">Продолжительность полета</th>
+                                <td><span class="stat-badge">{{ duration_sec|floatformat:1 }} секунд</span></td>
+                                <th scope="row">Количество записей</th>
+                                <td><span class="stat-badge">{{ data_count }}</span></td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Мощность (мин/макс/среднее)</th>
+                                <td>
+                                    <span class="optimal-value">{{ min_power_raw|floatformat:2 }} Вт</span> /
+                                    {{ max_power|floatformat:2 }} Вт /
+                                    {{ avg_power|floatformat:2 }} Вт
+                                </td>
+                                <th scope="row">Напряжение (мин/макс/среднее)</th>
+                                <td>
+                                    {{ min_voltage|floatformat:2 }} В /
+                                    {{ max_voltage|floatformat:2 }} В /
+                                    {{ avg_voltage|floatformat:2 }} В
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Ток (мин/макс/среднее)</th>
+                                <td>
+                                    {{ min_current|floatformat:2 }} А /
+                                    {{ max_current|floatformat:2 }} А /
+                                    {{ avg_current|floatformat:2 }} А
+                                </td>
+                                <th scope="row">Средняя потребляемая мощность</th>
+                                <td><span class="stat-badge">{{ avg_power|floatformat:2 }} Вт</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Optimal Parameters -->
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-gear-wide-connected me-2"></i>Оптимальные параметры эффективности
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <!-- Raw Data Optimum -->
+                    <div class="col-md-4 mb-3">
+                        <div class="card h-100 border-info">
+                            <div class="card-header bg-info bg-opacity-10 text-info">
+                                <i class="bi bi-database me-2"></i>Сырые данные
+                            </div>
+                            <div class="card-body">
+                                <table class="table table-sm">
+                                    <tr>
+                                        <th>Мин. мощность</th>
+                                        <td><span class="optimal-value">{{ min_power_raw|floatformat:2 }} Вт</span></td>
+                                    </tr>
+                                    <tr>
+                                        <th>ШИМ (долей)</th>
+                                        <td><span class="optimal-value">{{ opt_pwm_raw|floatformat:3 }}</span></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Обороты (%)</th>
+                                        <td><span class="optimal-value">{{ opt_rpm_raw|floatformat:1 }} %</span></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Model-Based Optimum -->
+                    <div class="col-md-4 mb-3">
+                        <div class="card h-100 border-warning">
+                            <div class="card-header bg-warning bg-opacity-10 text-warning">
+                                <i class="bi bi-robot me-2"></i>Полиномиальная модель
+                            </div>
+                            <div class="card-body">
+                                <table class="table table-sm">
+                                    <tr>
+                                        <th>Мин. мощность</th>
+                                        <td><span class="model-value">{{ model_min_power|floatformat:2 }} Вт</span></td>
+                                    </tr>
+                                    <tr>
+                                        <th>ШИМ (долей)</th>
+                                        <td><span class="model-value">{{ model_opt_pwm|floatformat:3 }}</span></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Обороты (%)</th>
+                                        <td><span class="model-value">{{ model_opt_rpm|floatformat:1 }} %</span></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Comparison -->
+                    <div class="col-md-4 mb-3">
+                        <div class="card h-100 border-success">
+                            <div class="card-header bg-success bg-opacity-10 text-success">
+                                <i class="bi bi-graph-up-arrow me-2"></i>Сравнение эффективности
+                            </div>
+                            <div class="card-body d-flex flex-column justify-content-center">
+                                <div class="text-center mb-3">
+                                    <h3 class="mb-0">
+                                        {% if potential_efficiency_gain %}
+                                            {% if potential_efficiency_gain.direction == 'positive' %}
+                                                <span class="text-success">
+                                                    +{{ potential_efficiency_gain.value|floatformat:1 }}%
+                                                </span>
+                                            {% elif potential_efficiency_gain.direction == 'negative' %}
+                                                <span class="text-danger">
+                                                    -{{ potential_efficiency_gain.value|floatformat:1 }}%
+                                                </span>
+                                            {% endif %}
+                                        {% else %}
+                                            <span class="text-muted">Н/Д</span>
+                                        {% endif %}
+                                    </h3>
+                                    <small class="text-muted">Потенциальный выигрыш в эффективности</small>
+                                </div>
+                                <div class="alert alert-info small mb-0">
+                                    Модель предсказывает оптимальные параметры в диапазоне реальных значений полета.
+                                    Экспериментальная проверка рекомендуется.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Graphs Grid (3 графика) -->
+        <div class="grid-container">
+            <!-- 3D Plot -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="bi bi-cube me-2"></i>3D: Мощность vs ШИМ и обороты
+                </div>
+                <div class="card-body">
+                    <div class="plot-container">
+                        {{ plot_3d|safe }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Heatmap -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="bi bi-grid-3x3-gap-fill me-2"></i>Тепловая карта: Распределение мощности
+                </div>
+                <div class="card-body">
+                    <div class="plot-container">
+                        {{ plot_hm|safe }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- PWM vs RPM Scatter -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="bi bi-scatter-chart me-2"></i>Соотношение ШИМ и оборотов
+                </div>
+                <div class="card-body">
+                    <div class="plot-container">
+                        {{ plot_scatter|safe }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Back Button -->
+        <div class="mt-4 text-center">
+            <a href="{% url 'esp:analyze_overview' %}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left me-1"></i>Назад к списку полетов
+            </a>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">
+                        <i class="bi bi-exclamation-triangle text-danger me-2"></i>Подтверждение удаления
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="post" action="{% url 'esp:delete_flight' flight_id %}">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <p class="text-warning">
+                            <i class="bi bi-info-circle me-1"></i> Внимание: Это действие удалит ВСЕ данные полета #{{ flight_id }} из базы данных.
+                        </p>
+                        <p>Введите пароль для подтверждения удаления:</p>
+                        <input type="password" name="password" class="form-control" placeholder="Пароль" required>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <i class="bi bi-x-lg me-1"></i>Отмена
+                        </button>
+                        <button type="submit" class="btn btn-danger">
+                            <i class="bi bi-trash me-1"></i>Удалить навсегда
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Debug Information Section - MOVED TO THE END -->
+    <div class="container-fluid mb-4">
+        <div class="d-grid gap-2">
+            <button class="btn debug-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#debugInfo" aria-expanded="false" aria-controls="debugInfo">
+                <i class="bi bi-bug-fill me-2"></i>СИСТЕМНАЯ ДИАГНОСТИКА (раскрыть для просмотра)
+            </button>
+        </div>
+
+        <div class="collapse mt-3" id="debugInfo">
+            <div class="card debug-panel">
+                <div class="card-header">
+                    <i class="bi bi-list-ul me-2"></i>Полная информация для отладки
+                </div>
+                <div class="card-body">
+                    {% if debug_info %}
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <h6 class="text-white">Статус анализа:</h6>
+                                <ul class="list-unstyled">
+                                    {% if debug_info.summary %}
+                                        <li class="debug-list-item py-1"><strong>Успех:</strong> {{ debug_info.summary.success|yesno:"✅ Да,❌ Нет" }}</li>
+                                        <li class="debug-list-item py-1"><strong>Ошибки:</strong> <span class="fw-bold">{{ debug_info.summary.error_count|default:0 }}</span></li>
+                                        <li class="debug-list-item py-1"><strong>Предупреждения:</strong> <span class="fw-bold">{{ debug_info.summary.warning_count|default:0 }}</span></li>
+                                        <li class="debug-list-item py-1"><strong>Качество данных:</strong>
+                                            {% if debug_info.summary.data_quality == "good" %}
+                                                <span class="text-success">✅ Отличное</span>
+                                            {% elif debug_info.summary.data_quality == "poor" %}
+                                                <span class="text-danger">❌ Плохое</span>
+                                            {% else %}
+                                                <span class="text-warning">⚠️ {{ debug_info.summary.data_quality|default:"Неизвестно" }}</span>
+                                            {% endif %}
+                                        </li>
+                                        {% if debug_info.summary.model_quality != "N/A" and debug_info.summary.model_quality != None %}
+                                        <li class="debug-list-item py-1"><strong>Качество модели (R²):</strong>
+                                            <span>
+                                                {{ debug_info.summary.model_quality|floatformat:3|default:"?" }}
+                                            </span>
+                                        </li>
+                                        {% endif %}
+                                    {% else %}
+                                        <li class="debug-list-item py-1 text-muted">Сводная информация отсутствует</li>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="text-white">Вариативность данных:</h6>
+                                <ul class="list-unstyled">
+                                    {% if debug_info.variability_check and debug_info.variability_check.pwm %}
+                                        <li class="debug-list-item py-1"><strong>ШИМ:</strong>
+                                            <span>
+                                                диапазон {{ debug_info.variability_check.pwm.range|floatformat:4|default:"?" }},
+                                                std {{ debug_info.variability_check.pwm.std|floatformat:4|default:"?" }}
+                                            </span>
+                                        </li>
+                                        <li class="debug-list-item py-1"><strong>Обороты:</strong>
+                                            <span>
+                                                диапазон {{ debug_info.variability_check.rpm.range|floatformat:2|default:"?" }},
+                                                std {{ debug_info.variability_check.rpm.std|floatformat:2|default:"?" }}
+                                            </span>
+                                        </li>
+                                        <li class="debug-list-item py-1"><strong>Мощность:</strong>
+                                            <span>
+                                                диапазон {{ debug_info.variability_check.power.range|floatformat:2|default:"?" }},
+                                                std {{ debug_info.variability_check.power.std|floatformat:2|default:"?" }}
+                                            </span>
+                                        </li>
+                                    {% else %}
+                                        <li class="debug-list-item py-1 text-muted">Данные о вариативности отсутствуют</li>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                        </div>
+
+                        {% if debug_info.warnings and debug_info.warnings|length > 0 %}
+                        <div class="mt-3 p-3 bg-warning bg-opacity-25 rounded">
+                            <h6 class="mb-2">⚠️ Предупреждения ({{ debug_info.warnings|length }}):</h6>
+                            <ul class="list-unstyled mb-0">
+                                {% for warning in debug_info.warnings %}
+                                <li class="small py-1 border-bottom border-warning border-opacity-25">
+                                    <i class="bi bi-exclamation-triangle-fill me-1"></i> {{ warning }}
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        {% endif %}
+
+                        {% if debug_info.errors and debug_info.errors|length > 0 %}
+                        <div class="mt-3 p-3 bg-danger bg-opacity-25 rounded">
+                            <h6 class="mb-2">❌ Ошибки ({{ debug_info.errors|length }}):</h6>
+                            <ul class="list-unstyled mb-0">
+                                {% for error in debug_info.errors %}
+                                <li class="small py-1 border-bottom border-danger border-opacity-25">
+                                    <i class="bi bi-x-circle-fill me-1"></i> {{ error }}
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        {% endif %}
+
+                        <div class="mt-3 p-3 bg-info bg-opacity-25 rounded">
+                            <h6 class="mb-2">💡 Рекомендации:</h6>
+                            <div class="small">
+                                <i class="bi bi-lightbulb me-1"></i>
+                                {% if debug_info.variability_check and debug_info.variability_check.pwm and debug_info.variability_check.pwm.range < 0.01 %}
+                                <strong>ШИМ:</strong> Текущий диапазон значений слишком мал ({{ debug_info.variability_check.pwm.range|floatformat:6 }}).
+                                Для качественной аналитики требуется диапазон не менее 0.01.
+                                Рекомендуется провести эксперимент с более широким изменением скважности ШИМ.
+                                {% elif debug_info.variability_check and debug_info.variability_check.rpm and debug_info.variability_check.rpm.range < 0.1 %}
+                                <strong>Обороты:</strong> Текущий диапазон оборотов слишком мал ({{ debug_info.variability_check.rpm.range|floatformat:2 }}%).
+                                Для качественной аналитики требуется диапазон не менее 0.5%.
+                                Рекомендуется провести эксперимент с более широким изменением оборотов двигателя.
+                                {% elif debug_info.variability_check and debug_info.variability_check.power and debug_info.variability_check.power.range < 0.5 %}
+                                <strong>Мощность:</strong> Текущий диапазон мощности слишком мал ({{ debug_info.variability_check.power.range|floatformat:2 }} Вт).
+                                Для качественной аналитики требуется диапазон не менее 0.5 Вт.
+                                Рекомендуется провести эксперимент при разных режимах нагрузки.
+                                {% else %}
+                                Данные выглядят достаточно вариативными для анализа!
+                                Если графики всё равно выглядят некорректно, проверьте:
+                                <ul class="mt-2 mb-0 ps-3">
+                                    <li>Правильно ли настроен сервер Django</li>
+                                    <li>Нет ли ошибок в консоли браузера (F12 → Console)</li>
+                                    <li>Достаточно ли записей в базе данных для выбранного полета</li>
+                                </ul>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Safe debug info display without JSON serialization -->
+                        <div class="mt-4 debug-raw">
+                            <h6 class="mb-2">🔧 Ключевые данные диагностики:</h6>
+                            <div>
+                                <p class="mb-1"><strong>Количество записей:</strong> {{ debug_info.data_count|default:"Неизвестно" }}</p>
+                                {% if debug_info.basic_stats %}
+                                <p class="mb-1"><strong>Мощность:</strong>
+                                    мин={{ debug_info.basic_stats.min_power|floatformat:2|default:"?" }} Вт,
+                                    макс={{ debug_info.basic_stats.max_power|floatformat:2|default:"?" }} Вт,
+                                    сред={{ debug_info.basic_stats.avg_power|floatformat:2|default:"?" }} Вт
+                                </p>
+                                <p class="mb-1"><strong>Напряжение:</strong>
+                                    мин={{ debug_info.basic_stats.min_voltage|floatformat:2|default:"?" }} В,
+                                    макс={{ debug_info.basic_stats.max_voltage|floatformat:2|default:"?" }} В
+                                </p>
+                                <p class="mb-1"><strong>Ток:</strong>
+                                    мин={{ debug_info.basic_stats.min_current|floatformat:2|default:"?" }} А,
+                                    макс={{ debug_info.basic_stats.max_current|floatformat:2|default:"?" }} А
+                                </p>
+                                {% endif %}
+                                {% if debug_info.raw_optimum %}
+                                <p class="mb-1"><strong>Экспериментальный оптимум:</strong>
+                                    мощность={{ debug_info.raw_optimum.power|floatformat:2|default:"?" }} Вт,
+                                    ШИМ={{ debug_info.raw_optimum.pwm|floatformat:3|default:"?" }},
+                                    обороты={{ debug_info.raw_optimum.rpm|floatformat:1|default:"?" }}%
+                                </p>
+                                {% endif %}
+                                {% if debug_info.model_optimum %}
+                                <p class="mb-1"><strong>Модельный оптимум:</strong>
+                                    мощность={{ debug_info.model_optimum.power|floatformat:2|default:"?" }} Вт,
+                                    ШИМ={{ debug_info.model_optimum.pwm|floatformat:3|default:"?" }},
+                                    обороты={{ debug_info.model_optimum.rpm|floatformat:1|default:"?" }}%
+                                </p>
+                                {% endif %}
+                                <p class="mb-1"><strong>Статус анализа:</strong>
+                                    {% if debug_info.summary and debug_info.summary.success %}
+                                        <span class="text-success">Успешно завершен</span>
+                                    {% else %}
+                                        <span class="text-danger">Завершен с ошибками</span>
+                                    {% endif %}
+                                </p>
+                                <p class="mb-0"><strong>Время анализа:</strong> {{ debug_info.timestamp|default:"Неизвестно" }}</p>
+                            </div>
+                        </div>
+
+                    {% else %}
+                        <div class="debug-missing">
+                            <h5 class="mb-3">
+                                <i class="bi bi-exclamation-octagon me-2"></i>КРИТИЧЕСКАЯ ПРОБЛЕМА: debug_info отсутствует!
+                            </h5>
+                            <p class="mb-2">
+                                <strong>Что это значит:</strong> Переменная debug_info не была передана в шаблон из Django view.
+                            </p>
+                            <p class="mb-2">
+                                <strong>Возможные причины:</strong>
+                            </p>
+                            <ul>
+                                <li>В view.py отсутствует добавление debug_info в контекст</li>
+                                <li>Произошла ошибка в view до формирования debug_info</li>
+                                <li>Сервер Django не был перезагружен после изменений</li>
+                            </ul>
+                            <p class="mb-3">
+                                <strong>Что делать:</strong>
+                            </p>
+                            <ol>
+                                <li>Откройте файл <code>esp/views.py</code></li>
+                                <li>Найдите функцию <code>flight_detail</code></li>
+                                <li>Убедитесь, что в конце функции есть строка: <code>'debug_info': debug_info</code> в словаре context</li>
+                                <li>Перезагрузите сервер Django (Ctrl+C и снова <code>python manage.py runserver</code>)</li>
+                                <li>Проверьте логи сервера на наличие ошибок</li>
+                            </ol>
+                            <div class="mt-3 p-2 bg-dark bg-opacity-25 rounded">
+                                <strong>Диагностическое сообщение:</strong> Система обнаружила отсутствие debug_info в контексте шаблона
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark">
+        <div class="container-fluid">
+            <span>Система аналитики БПЛА &copy; {% now 'Y' %} | Версия 2.2 | Буркалов Артём Михайлович | Авангард Науки</span>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Plotly Fix for Dark Mode -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Ensure Plotly modebar buttons are visible in dark mode
+            setTimeout(function() {
+                document.querySelectorAll('.modebar-btn').forEach(btn => {
+                    btn.style.filter = 'invert(1)';
+                });
+            }, 500);
+
+            // Responsive plot resizing
+            window.addEventListener('resize', function() {
+                document.querySelectorAll('.js-plotly-plot').forEach(plotDiv => {
+                    if (plotDiv && typeof Plotly !== 'undefined') {
+                        try {
+                            Plotly.Plots.resize(plotDiv);
+                        } catch (e) {
+                            console.warn('Plotly resize error:', e);
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
