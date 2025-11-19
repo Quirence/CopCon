@@ -4,7 +4,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>{{ page_title }}</title>
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -42,12 +42,17 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            overflow-x: hidden;
         }
 
         .container-fluid {
-            padding-top: 1.5rem;
-            padding-bottom: 2rem;
+            padding-top: 1rem;
+            padding-bottom: 1.5rem;
             flex: 1;
+            width: 100%;
+            max-width: 100%;
+            padding-left: 1rem !important;
+            padding-right: 1rem !important;
         }
 
         .card {
@@ -55,8 +60,10 @@
             border: 1px solid var(--border-color);
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
             transition: transform 0.2s ease;
+            width: 100%;
+            overflow: hidden;
         }
 
         .card:hover {
@@ -68,16 +75,18 @@
             color: var(--accent-light);
             font-weight: 600;
             border-bottom: 1px solid var(--border-color);
-            padding: 0.75rem 1.25rem;
+            padding: 0.6rem 1rem;
+            font-size: 1.1rem;
         }
 
         .card-body {
-            padding: 1.25rem;
+            padding: 1rem;
         }
 
         h1, h2, h3, h4, h5, h6 {
             color: var(--accent-light);
             font-weight: 600;
+            word-wrap: break-word;
         }
 
         .table {
@@ -85,22 +94,27 @@
             --bs-table-color: var(--text);
             --bs-table-bg: transparent;
             --bs-table-border-color: var(--border-color);
+            font-size: 0.9rem;
         }
 
         .table th {
             color: var(--text-muted);
             font-weight: 500;
             border-bottom: 1px solid var(--border-color);
+            font-size: 0.85rem;
         }
 
         .table td {
             color: var(--text);
             border-color: var(--border-color);
+            padding: 0.4rem;
         }
 
         .btn-outline-danger {
             color: var(--error);
             border-color: var(--error);
+            padding: 0.4rem 0.8rem;
+            font-size: 0.9rem;
         }
 
         .btn-outline-danger:hover {
@@ -111,6 +125,8 @@
         .btn-primary {
             background-color: var(--btn-primary);
             border-color: var(--btn-primary);
+            padding: 0.4rem 0.8rem;
+            font-size: 0.9rem;
         }
 
         .btn-primary:hover {
@@ -122,6 +138,8 @@
             background-color: var(--header-bg);
             color: var(--text);
             border: 1px solid var(--border-color);
+            padding: 0.4rem 0.8rem;
+            font-size: 0.9rem;
         }
 
         .btn-secondary:hover {
@@ -132,6 +150,8 @@
         .btn-danger {
             background-color: var(--btn-danger);
             border-color: var(--btn-danger);
+            padding: 0.4rem 0.8rem;
+            font-size: 0.9rem;
         }
 
         .btn-danger:hover {
@@ -152,25 +172,30 @@
 
         .modal-title {
             color: var(--accent-light);
+            font-size: 1.1rem;
         }
 
         .modal-body {
             color: var(--text);
+            padding: 1rem;
         }
 
         input.form-control {
             background-color: var(--input-bg) !important;
             color: var(--text) !important;
             border: 1px solid var(--border-color) !important;
+            padding: 0.5rem;
+            font-size: 0.95rem;
         }
 
         input.form-control::placeholder {
             color: var(--text-muted) !important;
+            font-size: 0.9rem;
         }
 
         input.form-control:focus {
             border-color: var(--accent) !important;
-            box-shadow: 0 0 0 0.25rem rgba(88, 166, 255, 0.25) !important;
+            box-shadow: 0 0 0 0.2rem rgba(88, 166, 255, 0.25) !important;
         }
 
         /* Plotly dark theme override */
@@ -187,30 +212,80 @@
             color: var(--text) !important;
         }
 
-        /* Plot container sizing */
+        /* Plot container sizing - CRITICAL FOR MOBILE */
         .plot-container {
             width: 100%;
-            min-height: 450px;
+            min-height: 300px;
+            max-height: 80vh;
             display: flex;
             justify-content: center;
             align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .plot-container > div {
+            width: 100% !important;
+            height: 100% !important;
+            min-height: 280px;
         }
 
         @media (max-width: 992px) {
             .plot-container {
-                min-height: 400px;
+                min-height: 350px;
             }
         }
 
         @media (max-width: 768px) {
             .plot-container {
-                min-height: 350px;
+                min-height: 300px;
+                max-height: 70vh;
             }
             .card-body {
-                padding: 1rem;
+                padding: 0.85rem;
             }
             .card-header {
-                padding: 0.5rem 1rem;
+                padding: 0.5rem 0.85rem;
+                font-size: 1rem;
+            }
+            .btn {
+                padding: 0.35rem 0.7rem;
+                font-size: 0.85rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .plot-container {
+                min-height: 250px;
+                max-height: 65vh;
+            }
+            .card-body {
+                padding: 0.75rem;
+            }
+            .card-header {
+                padding: 0.4rem 0.75rem;
+                font-size: 0.95rem;
+            }
+            .table {
+                font-size: 0.85rem;
+            }
+            .table th, .table td {
+                padding: 0.3rem;
+            }
+            h1 {
+                font-size: 1.5rem;
+            }
+            .flight-id-badge {
+                font-size: 0.85rem;
+                padding: 0.25rem 0.6rem;
+            }
+            .stat-badge {
+                font-size: 0.85rem;
+                padding: 0.2rem 0.6rem;
+            }
+            .debug-toggle {
+                font-size: 0.9rem;
+                padding: 0.4rem 0.8rem;
             }
         }
 
@@ -220,6 +295,7 @@
             padding: 0.25rem 0.75rem;
             border-radius: 4px;
             font-weight: 500;
+            font-size: 0.9rem;
         }
 
         .optimal-value {
@@ -236,37 +312,42 @@
             background-color: rgba(210, 153, 34, 0.1);
             border-color: rgba(210, 153, 34, 0.3);
             color: var(--warning);
+            font-size: 0.95rem;
+            padding: 0.75rem;
         }
 
         .no-data-message {
             text-align: center;
-            padding: 3rem 1rem;
+            padding: 2rem 1rem;
             color: var(--text-muted);
+            font-size: 1.1rem;
         }
 
         footer {
             text-align: center;
-            padding: 1rem;
+            padding: 0.8rem;
             color: var(--text-muted);
-            font-size: 0.875rem;
+            font-size: 0.8rem;
             border-top: 1px solid var(--border-color);
-            margin-top: 1rem;
+            margin-top: 0.8rem;
         }
 
         .flight-id-badge {
             background-color: rgba(56, 139, 253, 0.15);
             color: var(--accent-light);
             font-weight: 600;
-            padding: 0.35rem 0.85rem;
+            padding: 0.3rem 0.8rem;
             border-radius: 20px;
             display: inline-block;
             margin-left: 0.5rem;
+            font-size: 0.95rem;
         }
 
         .grid-container {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(550px, 1fr));
-            gap: 1.5rem;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1rem;
+            width: 100%;
         }
 
         @media (max-width: 768px) {
@@ -300,6 +381,7 @@
         .debug-panel a,
         .debug-panel code {
             color: #ffffff !important;
+            font-size: 0.95rem;
         }
 
         .debug-panel .text-success,
@@ -321,10 +403,10 @@
             background-color: rgba(0, 0, 0, 0.4);
             border: 1px solid var(--border-color);
             border-radius: 4px;
-            padding: 1rem;
+            padding: 0.8rem;
             font-family: monospace;
-            font-size: 0.85rem;
-            max-height: 400px;
+            font-size: 0.8rem;
+            max-height: 300px;
             overflow: auto;
             white-space: pre-wrap;
             word-break: break-all;
@@ -343,10 +425,10 @@
             background-color: rgba(26, 24, 43, 0.8);
             border: 1px solid var(--border-color);
             border-radius: 4px;
-            padding: 1rem;
-            margin-top: 1rem;
+            padding: 0.8rem;
+            margin-top: 0.8rem;
             font-family: monospace;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: #ffffff !important;
         }
 
@@ -355,6 +437,8 @@
             border: 1px solid var(--debug-border);
             color: #ffffff;
             transition: all 0.2s ease;
+            font-size: 0.95rem;
+            padding: 0.45rem 0.9rem;
         }
 
         .debug-toggle:hover {
@@ -365,75 +449,119 @@
         .debug-list-item {
             transition: all 0.2s ease;
             border-bottom: 1px solid rgba(100, 100, 100, 0.1);
+            padding: 0.4rem 0;
         }
 
         .debug-list-item:hover {
             background-color: rgba(111, 66, 193, 0.15);
         }
+
+        /* Mobile-specific fixes */
+        .mobile-scroll {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .mobile-stack {
+            flex-direction: column !important;
+        }
+
+        .mobile-center {
+            text-align: center !important;
+            margin-bottom: 0.75rem !important;
+        }
+
+        .mobile-full-width {
+            width: 100% !important;
+        }
+
+        /* Prevent content overflow */
+        .no-overflow {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        @media (max-width: 576px) {
+            .mobile-hidden {
+                display: none !important;
+            }
+            .mobile-text-sm {
+                font-size: 0.85rem !important;
+            }
+            .mobile-p-0 {
+                padding: 0 !important;
+            }
+            .mobile-mb-1 {
+                margin-bottom: 0.25rem !important;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container-fluid">
-        <!-- Header -->
-        <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4">
-            <div class="d-flex align-items-center mb-3 mb-md-0">
-                <h1 class="mb-0"><i class="bi bi-graph-up me-2"></i>Анализ полета</h1>
-                <span class="flight-id-badge">ID: {{ flight_id }}</span>
+        <!-- Header - Mobile Optimized -->
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-3">
+            <div class="d-flex flex-column flex-md-row align-items-center mb-2 mb-md-0 w-100">
+                <div class="d-flex align-items-center mb-1 mb-md-0">
+                    <h1 class="mb-0 fs-4"><i class="bi bi-graph-up me-2 fs-5"></i>Анализ полета</h1>
+                </div>
+                <span class="flight-id-badge ms-md-2 mt-1 mt-md-0">ID: {{ flight_id }}</span>
             </div>
-            <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+            <button type="button" class="btn btn-outline-danger btn-sm mobile-full-width" data-bs-toggle="modal" data-bs-target="#deleteModal">
                 <i class="bi bi-trash me-1"></i>Удалить данные полета
             </button>
         </div>
 
         {% if data_count < 10 %}
-        <div class="alert alert-warning text-center">
-            <i class="bi bi-exclamation-triangle me-2"></i>
+        <div class="alert alert-warning text-center py-2">
+            <i class="bi bi-exclamation-triangle me-1"></i>
             Для полета #{{ flight_id }} недостаточно данных ({{ data_count }} записей).
             Требуется минимум 10 записей для полноценного анализа.
         </div>
-        <div class="text-center mt-4">
-            <a href="{% url 'esp:analyze_overview' %}" class="btn btn-secondary">
+        <div class="text-center mt-3">
+            <a href="{% url 'esp:analyze_overview' %}" class="btn btn-secondary btn-sm">
                 <i class="bi bi-arrow-left me-1"></i>Вернуться к выбору полетов
             </a>
         </div>
         {% else %}
-        <!-- Summary Card -->
+        <!-- Summary Card - Mobile Optimized -->
         <div class="card">
             <div class="card-header">
                 <i class="bi bi-speedometer2 me-2"></i>Резюме полета
             </div>
-            <div class="card-body">
+            <div class="card-body mobile-scroll">
                 <div class="table-responsive">
-                    <table class="table">
+                    <table class="table table-sm">
                         <tbody>
                             <tr>
-                                <th scope="row">Продолжительность полета</th>
-                                <td><span class="stat-badge">{{ duration_sec|floatformat:1 }} секунд</span></td>
-                                <th scope="row">Количество записей</th>
+                                <th scope="row" class="mobile-text-sm">Продолжительность</th>
+                                <td><span class="stat-badge">{{ duration_sec|floatformat:1 }} сек</span></td>
+                                <th scope="row" class="mobile-text-sm">Записей</th>
                                 <td><span class="stat-badge">{{ data_count }}</span></td>
                             </tr>
                             <tr>
-                                <th scope="row">Мощность (мин/макс/среднее)</th>
-                                <td>
+                                <th scope="row" class="mobile-text-sm">Мощность (мин/макс/ср)</th>
+                                <td class="mobile-text-sm">
                                     <span class="optimal-value">{{ min_power_raw|floatformat:2 }} Вт</span> /
                                     {{ max_power|floatformat:2 }} Вт /
                                     {{ avg_power|floatformat:2 }} Вт
                                 </td>
-                                <th scope="row">Напряжение (мин/макс/среднее)</th>
-                                <td>
+                                <th scope="row" class="mobile-text-sm">Напряжение (мин/макс/ср)</th>
+                                <td class="mobile-text-sm">
                                     {{ min_voltage|floatformat:2 }} В /
                                     {{ max_voltage|floatformat:2 }} В /
                                     {{ avg_voltage|floatformat:2 }} В
                                 </td>
                             </tr>
                             <tr>
-                                <th scope="row">Ток (мин/макс/среднее)</th>
-                                <td>
+                                <th scope="row" class="mobile-text-sm">Ток (мин/макс/ср)</th>
+                                <td class="mobile-text-sm">
                                     {{ min_current|floatformat:2 }} А /
                                     {{ max_current|floatformat:2 }} А /
                                     {{ avg_current|floatformat:2 }} А
                                 </td>
-                                <th scope="row">Средняя потребляемая мощность</th>
+                                <th scope="row" class="mobile-text-sm">Средняя мощность</th>
                                 <td><span class="stat-badge">{{ avg_power|floatformat:2 }} Вт</span></td>
                             </tr>
                         </tbody>
@@ -442,31 +570,31 @@
             </div>
         </div>
 
-        <!-- Optimal Parameters -->
+        <!-- Optimal Parameters - Mobile Optimized -->
         <div class="card">
             <div class="card-header">
                 <i class="bi bi-gear-wide-connected me-2"></i>Оптимальные параметры эффективности
             </div>
             <div class="card-body">
-                <div class="row">
+                <div class="row g-2">
                     <!-- Raw Data Optimum -->
-                    <div class="col-md-4 mb-3">
+                    <div class="col-12 col-md-4 mb-2">
                         <div class="card h-100 border-info">
-                            <div class="card-header bg-info bg-opacity-10 text-info">
-                                <i class="bi bi-database me-2"></i>Сырые данные
+                            <div class="card-header bg-info bg-opacity-10 text-info py-1">
+                                <i class="bi bi-database me-1"></i>Сырые данные
                             </div>
-                            <div class="card-body">
-                                <table class="table table-sm">
+                            <div class="card-body p-2">
+                                <table class="table table-sm mb-0">
                                     <tr>
-                                        <th>Мин. мощность</th>
+                                        <th class="mobile-text-sm">Мин. мощность</th>
                                         <td><span class="optimal-value">{{ min_power_raw|floatformat:2 }} Вт</span></td>
                                     </tr>
                                     <tr>
-                                        <th>ШИМ (долей)</th>
+                                        <th class="mobile-text-sm">ШИМ (долей)</th>
                                         <td><span class="optimal-value">{{ opt_pwm_raw|floatformat:3 }}</span></td>
                                     </tr>
                                     <tr>
-                                        <th>Обороты (%)</th>
+                                        <th class="mobile-text-sm">Обороты (%)</th>
                                         <td><span class="optimal-value">{{ opt_rpm_raw|floatformat:1 }} %</span></td>
                                     </tr>
                                 </table>
@@ -474,23 +602,23 @@
                         </div>
                     </div>
                     <!-- Model-Based Optimum -->
-                    <div class="col-md-4 mb-3">
+                    <div class="col-12 col-md-4 mb-2">
                         <div class="card h-100 border-warning">
-                            <div class="card-header bg-warning bg-opacity-10 text-warning">
-                                <i class="bi bi-robot me-2"></i>Полиномиальная модель
+                            <div class="card-header bg-warning bg-opacity-10 text-warning py-1">
+                                <i class="bi bi-robot me-1"></i>Полиномиальная модель
                             </div>
-                            <div class="card-body">
-                                <table class="table table-sm">
+                            <div class="card-body p-2">
+                                <table class="table table-sm mb-0">
                                     <tr>
-                                        <th>Мин. мощность</th>
+                                        <th class="mobile-text-sm">Мин. мощность</th>
                                         <td><span class="model-value">{{ model_min_power|floatformat:2 }} Вт</span></td>
                                     </tr>
                                     <tr>
-                                        <th>ШИМ (долей)</th>
+                                        <th class="mobile-text-sm">ШИМ (долей)</th>
                                         <td><span class="model-value">{{ model_opt_pwm|floatformat:3 }}</span></td>
                                     </tr>
                                     <tr>
-                                        <th>Обороты (%)</th>
+                                        <th class="mobile-text-sm">Обороты (%)</th>
                                         <td><span class="model-value">{{ model_opt_rpm|floatformat:1 }} %</span></td>
                                     </tr>
                                 </table>
@@ -498,14 +626,14 @@
                         </div>
                     </div>
                     <!-- Comparison -->
-                    <div class="col-md-4 mb-3">
+                    <div class="col-12 col-md-4 mb-2">
                         <div class="card h-100 border-success">
-                            <div class="card-header bg-success bg-opacity-10 text-success">
-                                <i class="bi bi-graph-up-arrow me-2"></i>Сравнение эффективности
+                            <div class="card-header bg-success bg-opacity-10 text-success py-1">
+                                <i class="bi bi-graph-up-arrow me-1"></i>Сравнение эффективности
                             </div>
-                            <div class="card-body d-flex flex-column justify-content-center">
-                                <div class="text-center mb-3">
-                                    <h3 class="mb-0">
+                            <div class="card-body d-flex flex-column justify-content-center p-2">
+                                <div class="text-center mb-2">
+                                    <h4 class="mb-0 fs-5">
                                         {% if potential_efficiency_gain %}
                                             {% if potential_efficiency_gain.direction == 'positive' %}
                                                 <span class="text-success">
@@ -519,12 +647,11 @@
                                         {% else %}
                                             <span class="text-muted">Н/Д</span>
                                         {% endif %}
-                                    </h3>
-                                    <small class="text-muted">Потенциальный выигрыш в эффективности</small>
+                                    </h4>
+                                    <small class="text-muted d-block">Потенциальный выигрыш<br>в эффективности</small>
                                 </div>
-                                <div class="alert alert-info small mb-0">
-                                    Модель предсказывает оптимальные параметры в диапазоне реальных значений полета.
-                                    Экспериментальная проверка рекомендуется.
+                                <div class="alert alert-info small mb-0 p-1">
+                                    <small class="d-block">Модель предсказывает оптимальные параметры в диапазоне реальных значений полета. Экспериментальная проверка рекомендуется.</small>
                                 </div>
                             </div>
                         </div>
@@ -533,14 +660,14 @@
             </div>
         </div>
 
-        <!-- Graphs Grid (3 графика) -->
+        <!-- Graphs Grid (3 графика) - Fully Responsive -->
         <div class="grid-container">
             <!-- 3D Plot -->
             <div class="card">
                 <div class="card-header">
                     <i class="bi bi-cube me-2"></i>3D: Мощность vs ШИМ и обороты
                 </div>
-                <div class="card-body">
+                <div class="card-body p-1">
                     <div class="plot-container">
                         {{ plot_3d|safe }}
                     </div>
@@ -552,7 +679,7 @@
                 <div class="card-header">
                     <i class="bi bi-grid-3x3-gap-fill me-2"></i>Тепловая карта: Распределение мощности
                 </div>
-                <div class="card-body">
+                <div class="card-body p-1">
                     <div class="plot-container">
                         {{ plot_hm|safe }}
                     </div>
@@ -564,7 +691,7 @@
                 <div class="card-header">
                     <i class="bi bi-scatter-chart me-2"></i>Соотношение ШИМ и оборотов
                 </div>
-                <div class="card-body">
+                <div class="card-body p-1">
                     <div class="plot-container">
                         {{ plot_scatter|safe }}
                     </div>
@@ -573,8 +700,8 @@
         </div>
 
         <!-- Back Button -->
-        <div class="mt-4 text-center">
-            <a href="{% url 'esp:analyze_overview' %}" class="btn btn-secondary">
+        <div class="mt-3 text-center">
+            <a href="{% url 'esp:analyze_overview' %}" class="btn btn-secondary btn-sm mobile-full-width">
                 <i class="bi bi-arrow-left me-1"></i>Назад к списку полетов
             </a>
         </div>
@@ -583,28 +710,28 @@
 
     <!-- Delete Confirmation Modal -->
     <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="deleteModalLabel">
-                        <i class="bi bi-exclamation-triangle text-danger me-2"></i>Подтверждение удаления
+                <div class="modal-header py-2">
+                    <h5 class="modal-title fs-6" id="deleteModalLabel">
+                        <i class="bi bi-exclamation-triangle text-danger me-1 fs-6"></i>Подтверждение удаления
                     </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-sm" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form method="post" action="{% url 'esp:delete_flight' flight_id %}">
                     {% csrf_token %}
-                    <div class="modal-body">
-                        <p class="text-warning">
+                    <div class="modal-body py-2">
+                        <p class="text-warning small mb-2">
                             <i class="bi bi-info-circle me-1"></i> Внимание: Это действие удалит ВСЕ данные полета #{{ flight_id }} из базы данных.
                         </p>
-                        <p>Введите пароль для подтверждения удаления:</p>
-                        <input type="password" name="password" class="form-control" placeholder="Пароль" required>
+                        <p class="small mb-1">Введите пароль для подтверждения удаления:</p>
+                        <input type="password" name="password" class="form-control form-control-sm" placeholder="Пароль" required>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <div class="modal-footer py-2">
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">
                             <i class="bi bi-x-lg me-1"></i>Отмена
                         </button>
-                        <button type="submit" class="btn btn-danger">
+                        <button type="submit" class="btn btn-danger btn-sm">
                             <i class="bi bi-trash me-1"></i>Удалить навсегда
                         </button>
                     </div>
@@ -614,84 +741,73 @@
     </div>
 
     <!-- Debug Information Section - MOVED TO THE END -->
-    <div class="container-fluid mb-4">
+    <div class="container-fluid mb-3 px-2">
         <div class="d-grid gap-2">
-            <button class="btn debug-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#debugInfo" aria-expanded="false" aria-controls="debugInfo">
-                <i class="bi bi-bug-fill me-2"></i>СИСТЕМНАЯ ДИАГНОСТИКА (раскрыть для просмотра)
+            <button class="btn debug-toggle w-100" type="button" data-bs-toggle="collapse" data-bs-target="#debugInfo" aria-expanded="false" aria-controls="debugInfo">
+                <i class="bi bi-bug-fill me-1"></i>СИСТЕМНАЯ ДИАГНОСТИКА (раскрыть для просмотра)
             </button>
         </div>
 
-        <div class="collapse mt-3" id="debugInfo">
+        <div class="collapse mt-2" id="debugInfo">
             <div class="card debug-panel">
-                <div class="card-header">
-                    <i class="bi bi-list-ul me-2"></i>Полная информация для отладки
+                <div class="card-header py-1">
+                    <i class="bi bi-list-ul me-1"></i>Полная информация для отладки
                 </div>
-                <div class="card-body">
+                <div class="card-body p-2">
                     {% if debug_info %}
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <h6 class="text-white">Статус анализа:</h6>
-                                <ul class="list-unstyled">
+                        <div class="row gx-1 gy-2 mb-2">
+                            <div class="col-12 col-md-6">
+                                <h6 class="text-white mb-1 fs-6">Статус анализа:</h6>
+                                <ul class="list-unstyled mb-0 small">
                                     {% if debug_info.summary %}
-                                        <li class="debug-list-item py-1"><strong>Успех:</strong> {{ debug_info.summary.success|yesno:"✅ Да,❌ Нет" }}</li>
-                                        <li class="debug-list-item py-1"><strong>Ошибки:</strong> <span class="fw-bold">{{ debug_info.summary.error_count|default:0 }}</span></li>
-                                        <li class="debug-list-item py-1"><strong>Предупреждения:</strong> <span class="fw-bold">{{ debug_info.summary.warning_count|default:0 }}</span></li>
-                                        <li class="debug-list-item py-1"><strong>Качество данных:</strong>
+                                        <li class="debug-list-item"><strong>Успех:</strong> {{ debug_info.summary.success|yesno:"✅ Да,❌ Нет" }}</li>
+                                        <li class="debug-list-item"><strong>Ошибки:</strong> <span class="fw-bold">{{ debug_info.summary.error_count|default:0 }}</span></li>
+                                        <li class="debug-list-item"><strong>Предупреждения:</strong> <span class="fw-bold">{{ debug_info.summary.warning_count|default:0 }}</span></li>
+                                        <li class="debug-list-item"><strong>Качество данных:</strong>
                                             {% if debug_info.summary.data_quality == "good" %}
-                                                <span class="text-success">✅ Отличное</span>
+                                                <span class="text-success">Отличное</span>
                                             {% elif debug_info.summary.data_quality == "poor" %}
-                                                <span class="text-danger">❌ Плохое</span>
+                                                <span class="text-danger">Плохое</span>
                                             {% else %}
-                                                <span class="text-warning">⚠️ {{ debug_info.summary.data_quality|default:"Неизвестно" }}</span>
+                                                <span class="text-warning">{{ debug_info.summary.data_quality|default:"Неизвестно" }}</span>
                                             {% endif %}
                                         </li>
                                         {% if debug_info.summary.model_quality != "N/A" and debug_info.summary.model_quality != None %}
-                                        <li class="debug-list-item py-1"><strong>Качество модели (R²):</strong>
-                                            <span>
-                                                {{ debug_info.summary.model_quality|floatformat:3|default:"?" }}
-                                            </span>
+                                        <li class="debug-list-item"><strong>Качество модели (R²):</strong>
+                                            <span>{{ debug_info.summary.model_quality|floatformat:3|default:"?" }}</span>
                                         </li>
                                         {% endif %}
                                     {% else %}
-                                        <li class="debug-list-item py-1 text-muted">Сводная информация отсутствует</li>
+                                        <li class="debug-list-item text-muted">Сводная информация отсутствует</li>
                                     {% endif %}
                                 </ul>
                             </div>
-                            <div class="col-md-6">
-                                <h6 class="text-white">Вариативность данных:</h6>
-                                <ul class="list-unstyled">
+                            <div class="col-12 col-md-6">
+                                <h6 class="text-white mb-1 fs-6">Вариативность данных:</h6>
+                                <ul class="list-unstyled mb-0 small">
                                     {% if debug_info.variability_check and debug_info.variability_check.pwm %}
-                                        <li class="debug-list-item py-1"><strong>ШИМ:</strong>
-                                            <span>
-                                                диапазон {{ debug_info.variability_check.pwm.range|floatformat:4|default:"?" }},
-                                                std {{ debug_info.variability_check.pwm.std|floatformat:4|default:"?" }}
-                                            </span>
+                                        <li class="debug-list-item"><strong>ШИМ:</strong>
+                                            <span>диапазон {{ debug_info.variability_check.pwm.range|floatformat:4|default:"?" }}, std {{ debug_info.variability_check.pwm.std|floatformat:4|default:"?" }}</span>
                                         </li>
-                                        <li class="debug-list-item py-1"><strong>Обороты:</strong>
-                                            <span>
-                                                диапазон {{ debug_info.variability_check.rpm.range|floatformat:2|default:"?" }},
-                                                std {{ debug_info.variability_check.rpm.std|floatformat:2|default:"?" }}
-                                            </span>
+                                        <li class="debug-list-item"><strong>Обороты:</strong>
+                                            <span>диапазон {{ debug_info.variability_check.rpm.range|floatformat:2|default:"?" }}, std {{ debug_info.variability_check.rpm.std|floatformat:2|default:"?" }}</span>
                                         </li>
-                                        <li class="debug-list-item py-1"><strong>Мощность:</strong>
-                                            <span>
-                                                диапазон {{ debug_info.variability_check.power.range|floatformat:2|default:"?" }},
-                                                std {{ debug_info.variability_check.power.std|floatformat:2|default:"?" }}
-                                            </span>
+                                        <li class="debug-list-item"><strong>Мощность:</strong>
+                                            <span>диапазон {{ debug_info.variability_check.power.range|floatformat:2|default:"?" }}, std {{ debug_info.variability_check.power.std|floatformat:2|default:"?" }}</span>
                                         </li>
                                     {% else %}
-                                        <li class="debug-list-item py-1 text-muted">Данные о вариативности отсутствуют</li>
+                                        <li class="debug-list-item text-muted">Данные о вариативности отсутствуют</li>
                                     {% endif %}
                                 </ul>
                             </div>
                         </div>
 
                         {% if debug_info.warnings and debug_info.warnings|length > 0 %}
-                        <div class="mt-3 p-3 bg-warning bg-opacity-25 rounded">
-                            <h6 class="mb-2">⚠️ Предупреждения ({{ debug_info.warnings|length }}):</h6>
+                        <div class="mt-2 p-2 bg-warning bg-opacity-25 rounded small">
+                            <h6 class="mb-1 fs-6">Предупреждения ({{ debug_info.warnings|length }}):</h6>
                             <ul class="list-unstyled mb-0">
                                 {% for warning in debug_info.warnings %}
-                                <li class="small py-1 border-bottom border-warning border-opacity-25">
+                                <li class="py-1 border-bottom border-warning border-opacity-25">
                                     <i class="bi bi-exclamation-triangle-fill me-1"></i> {{ warning }}
                                 </li>
                                 {% endfor %}
@@ -700,11 +816,11 @@
                         {% endif %}
 
                         {% if debug_info.errors and debug_info.errors|length > 0 %}
-                        <div class="mt-3 p-3 bg-danger bg-opacity-25 rounded">
-                            <h6 class="mb-2">❌ Ошибки ({{ debug_info.errors|length }}):</h6>
+                        <div class="mt-2 p-2 bg-danger bg-opacity-25 rounded small">
+                            <h6 class="mb-1 fs-6">Ошибки ({{ debug_info.errors|length }}):</h6>
                             <ul class="list-unstyled mb-0">
                                 {% for error in debug_info.errors %}
-                                <li class="small py-1 border-bottom border-danger border-opacity-25">
+                                <li class="py-1 border-bottom border-danger border-opacity-25">
                                     <i class="bi bi-x-circle-fill me-1"></i> {{ error }}
                                 </li>
                                 {% endfor %}
@@ -712,67 +828,42 @@
                         </div>
                         {% endif %}
 
-                        <div class="mt-3 p-3 bg-info bg-opacity-25 rounded">
-                            <h6 class="mb-2">💡 Рекомендации:</h6>
-                            <div class="small">
+                        <div class="mt-2 p-2 bg-info bg-opacity-25 rounded small">
+                            <h6 class="mb-1 fs-6">Рекомендации:</h6>
+                            <div>
                                 <i class="bi bi-lightbulb me-1"></i>
                                 {% if debug_info.variability_check and debug_info.variability_check.pwm and debug_info.variability_check.pwm.range < 0.01 %}
-                                <strong>ШИМ:</strong> Текущий диапазон значений слишком мал ({{ debug_info.variability_check.pwm.range|floatformat:6 }}).
-                                Для качественной аналитики требуется диапазон не менее 0.01.
-                                Рекомендуется провести эксперимент с более широким изменением скважности ШИМ.
+                                <strong>ШИМ:</strong> Текущий диапазон значений слишком мал ({{ debug_info.variability_check.pwm.range|floatformat:6 }}). Для качественной аналитики требуется диапазон не менее 0.01.
                                 {% elif debug_info.variability_check and debug_info.variability_check.rpm and debug_info.variability_check.rpm.range < 0.1 %}
-                                <strong>Обороты:</strong> Текущий диапазон оборотов слишком мал ({{ debug_info.variability_check.rpm.range|floatformat:2 }}%).
-                                Для качественной аналитики требуется диапазон не менее 0.5%.
-                                Рекомендуется провести эксперимент с более широким изменением оборотов двигателя.
+                                <strong>Обороты:</strong> Текущий диапазон оборотов слишком мал ({{ debug_info.variability_check.rpm.range|floatformat:2 }}%). Для качественной аналитики требуется диапазон не менее 0.5%.
                                 {% elif debug_info.variability_check and debug_info.variability_check.power and debug_info.variability_check.power.range < 0.5 %}
-                                <strong>Мощность:</strong> Текущий диапазон мощности слишком мал ({{ debug_info.variability_check.power.range|floatformat:2 }} Вт).
-                                Для качественной аналитики требуется диапазон не менее 0.5 Вт.
-                                Рекомендуется провести эксперимент при разных режимах нагрузки.
+                                <strong>Мощность:</strong> Текущий диапазон мощности слишком мал ({{ debug_info.variability_check.power.range|floatformat:2 }} Вт). Для качественной аналитики требуется диапазон не менее 0.5 Вт.
                                 {% else %}
-                                Данные выглядят достаточно вариативными для анализа!
-                                Если графики всё равно выглядят некорректно, проверьте:
-                                <ul class="mt-2 mb-0 ps-3">
-                                    <li>Правильно ли настроен сервер Django</li>
-                                    <li>Нет ли ошибок в консоли браузера (F12 → Console)</li>
-                                    <li>Достаточно ли записей в базе данных для выбранного полета</li>
+                                Данные выглядят достаточно вариативными для анализа.
+                                <ul class="mt-1 mb-0 ps-3 small">
+                                    <li>Сервер правильно настроен</li>
+                                    <li>Модель вернула все данные</li>
+                                    <li>Приветствую всех любопытных экспертов Авангарда</li>
                                 </ul>
                                 {% endif %}
                             </div>
                         </div>
 
                         <!-- Safe debug info display without JSON serialization -->
-                        <div class="mt-4 debug-raw">
-                            <h6 class="mb-2">🔧 Ключевые данные диагностики:</h6>
+                        <div class="mt-3 debug-raw small">
+                            <h6 class="mb-1 fs-6">Ключевые данные диагностики:</h6>
                             <div>
                                 <p class="mb-1"><strong>Количество записей:</strong> {{ debug_info.data_count|default:"Неизвестно" }}</p>
                                 {% if debug_info.basic_stats %}
-                                <p class="mb-1"><strong>Мощность:</strong>
-                                    мин={{ debug_info.basic_stats.min_power|floatformat:2|default:"?" }} Вт,
-                                    макс={{ debug_info.basic_stats.max_power|floatformat:2|default:"?" }} Вт,
-                                    сред={{ debug_info.basic_stats.avg_power|floatformat:2|default:"?" }} Вт
-                                </p>
-                                <p class="mb-1"><strong>Напряжение:</strong>
-                                    мин={{ debug_info.basic_stats.min_voltage|floatformat:2|default:"?" }} В,
-                                    макс={{ debug_info.basic_stats.max_voltage|floatformat:2|default:"?" }} В
-                                </p>
-                                <p class="mb-1"><strong>Ток:</strong>
-                                    мин={{ debug_info.basic_stats.min_current|floatformat:2|default:"?" }} А,
-                                    макс={{ debug_info.basic_stats.max_current|floatformat:2|default:"?" }} А
-                                </p>
+                                <p class="mb-1"><strong>Мощность:</strong> мин={{ debug_info.basic_stats.min_power|floatformat:2|default:"?" }} Вт, макс={{ debug_info.basic_stats.max_power|floatformat:2|default:"?" }} Вт, сред={{ debug_info.basic_stats.avg_power|floatformat:2|default:"?" }} Вт</p>
+                                <p class="mb-1"><strong>Напряжение:</strong> мин={{ debug_info.basic_stats.min_voltage|floatformat:2|default:"?" }} В, макс={{ debug_info.basic_stats.max_voltage|floatformat:2|default:"?" }} В</p>
+                                <p class="mb-1"><strong>Ток:</strong> мин={{ debug_info.basic_stats.min_current|floatformat:2|default:"?" }} А, макс={{ debug_info.basic_stats.max_current|floatformat:2|default:"?" }} А</p>
                                 {% endif %}
                                 {% if debug_info.raw_optimum %}
-                                <p class="mb-1"><strong>Экспериментальный оптимум:</strong>
-                                    мощность={{ debug_info.raw_optimum.power|floatformat:2|default:"?" }} Вт,
-                                    ШИМ={{ debug_info.raw_optimum.pwm|floatformat:3|default:"?" }},
-                                    обороты={{ debug_info.raw_optimum.rpm|floatformat:1|default:"?" }}%
-                                </p>
+                                <p class="mb-1"><strong>Экспериментальный оптимум:</strong> мощность={{ debug_info.raw_optimum.power|floatformat:2|default:"?" }} Вт, ШИМ={{ debug_info.raw_optimum.pwm|floatformat:3|default:"?" }}, обороты={{ debug_info.raw_optimum.rpm|floatformat:1|default:"?" }}%</p>
                                 {% endif %}
                                 {% if debug_info.model_optimum %}
-                                <p class="mb-1"><strong>Модельный оптимум:</strong>
-                                    мощность={{ debug_info.model_optimum.power|floatformat:2|default:"?" }} Вт,
-                                    ШИМ={{ debug_info.model_optimum.pwm|floatformat:3|default:"?" }},
-                                    обороты={{ debug_info.model_optimum.rpm|floatformat:1|default:"?" }}%
-                                </p>
+                                <p class="mb-1"><strong>Модельный оптимум:</strong> мощность={{ debug_info.model_optimum.power|floatformat:2|default:"?" }} Вт, ШИМ={{ debug_info.model_optimum.pwm|floatformat:3|default:"?" }}, обороты={{ debug_info.model_optimum.rpm|floatformat:1|default:"?" }}%</p>
                                 {% endif %}
                                 <p class="mb-1"><strong>Статус анализа:</strong>
                                     {% if debug_info.summary and debug_info.summary.success %}
@@ -786,34 +877,31 @@
                         </div>
 
                     {% else %}
-                        <div class="debug-missing">
-                            <h5 class="mb-3">
-                                <i class="bi bi-exclamation-octagon me-2"></i>КРИТИЧЕСКАЯ ПРОБЛЕМА: debug_info отсутствует!
+                        <div class="debug-missing small">
+                            <h5 class="mb-2 fs-6">
+                                <i class="bi bi-exclamation-octagon me-1"></i>КРИТИЧЕСКАЯ ПРОБЛЕМА: debug_info отсутствует!
                             </h5>
-                            <p class="mb-2">
+                            <p class="mb-1">
                                 <strong>Что это значит:</strong> Переменная debug_info не была передана в шаблон из Django view.
                             </p>
-                            <p class="mb-2">
+                            <p class="mb-1">
                                 <strong>Возможные причины:</strong>
                             </p>
-                            <ul>
+                            <ul class="mb-2 small">
                                 <li>В view.py отсутствует добавление debug_info в контекст</li>
                                 <li>Произошла ошибка в view до формирования debug_info</li>
                                 <li>Сервер Django не был перезагружен после изменений</li>
                             </ul>
-                            <p class="mb-3">
+                            <p class="mb-1">
                                 <strong>Что делать:</strong>
                             </p>
-                            <ol>
+                            <ol class="mb-0 small">
                                 <li>Откройте файл <code>esp/views.py</code></li>
                                 <li>Найдите функцию <code>flight_detail</code></li>
                                 <li>Убедитесь, что в конце функции есть строка: <code>'debug_info': debug_info</code> в словаре context</li>
-                                <li>Перезагрузите сервер Django (Ctrl+C и снова <code>python manage.py runserver</code>)</li>
+                                <li>Перезагрузите сервер Django</li>
                                 <li>Проверьте логи сервера на наличие ошибок</li>
                             </ol>
-                            <div class="mt-3 p-2 bg-dark bg-opacity-25 rounded">
-                                <strong>Диагностическое сообщение:</strong> Система обнаружила отсутствие debug_info в контексте шаблона
-                            </div>
                         </div>
                     {% endif %}
                 </div>
@@ -823,36 +911,74 @@
 
     <!-- Footer -->
     <footer class="bg-dark">
-        <div class="container-fluid">
-            <span>Система аналитики БПЛА &copy; {% now 'Y' %} | Версия 2.2 | Буркалов Артём Михайлович | Авангард Науки</span>
+        <div class="container-fluid px-2 py-1">
+            <span class="small">Система аналитики БПЛА &copy; {% now 'Y' %} | Версия 2.2 | Буркалов А.М. | Авангард Науки</span>
         </div>
     </footer>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Plotly Fix for Dark Mode -->
+    <!-- Plotly Fix for Dark Mode and Mobile -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Ensure Plotly modebar buttons are visible in dark mode
-            setTimeout(function() {
+            function fixPlotlyModebar() {
                 document.querySelectorAll('.modebar-btn').forEach(btn => {
                     btn.style.filter = 'invert(1)';
                 });
-            }, 500);
+            }
+
+            // Initial fix
+            setTimeout(fixPlotlyModebar, 500);
+            setTimeout(fixPlotlyModebar, 1500); // Additional fix for slow devices
 
             // Responsive plot resizing
-            window.addEventListener('resize', function() {
+            function resizePlots() {
                 document.querySelectorAll('.js-plotly-plot').forEach(plotDiv => {
                     if (plotDiv && typeof Plotly !== 'undefined') {
                         try {
-                            Plotly.Plots.resize(plotDiv);
+                            // Get container width
+                            const container = plotDiv.closest('.plot-container');
+                            if (container) {
+                                // Set height based on width with aspect ratio
+                                const width = container.offsetWidth;
+                                const aspectRatio = 0.7; // 70% of width
+                                const newHeight = Math.max(250, Math.min(450, width * aspectRatio));
+
+                                container.style.height = `${newHeight}px`;
+                                Plotly.Plots.resize(plotDiv);
+                            }
                         } catch (e) {
                             console.warn('Plotly resize error:', e);
                         }
                     }
                 });
+            }
+
+            // Initial resize
+            resizePlots();
+
+            // Resize on window resize with debounce
+            let resizeTimeout;
+            window.addEventListener('resize', function() {
+                clearTimeout(resizeTimeout);
+                resizeTimeout = setTimeout(resizePlots, 150);
             });
+
+            // Additional mobile-specific fixes
+            if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                // Force initial resize after page load
+                setTimeout(resizePlots, 1000);
+
+                // Prevent zoom on input focus
+                document.querySelectorAll('input, select, textarea').forEach(element => {
+                    element.addEventListener('focus', function() {
+                        document.body.scrollTop = 0;
+                        document.documentElement.scrollTop = 0;
+                    });
+                });
+            }
         });
     </script>
 </body>
